@@ -35,6 +35,7 @@ class MigrateSkipRowTest extends KernelTestBase {
         'data_rows' => [
           ['id' => '1', 'data' => 'skip_and_record'],
           ['id' => '2', 'data' => 'skip_and_dont_record'],
+          ['id' => '3', 'data' => 'skip_and_record_with_message'],
         ],
         'ids' => [
           'id' => ['type' => 'string'],
@@ -61,7 +62,7 @@ class MigrateSkipRowTest extends KernelTestBase {
     // The second row is not recorded in the map.
     $map_row = $id_map_plugin->getRowBySource(['id' => 2]);
     $this->assertFalse($map_row);
-
+    $map_row = $id_map_plugin->getRowBySource(['id' => 3]);
   }
 
 }

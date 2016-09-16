@@ -23,4 +23,7 @@ function migrate_prepare_row_test_migrate_prepare_row(Row $row, MigrateSourceInt
   elseif ($data == 'skip_and_dont_record') {
     throw new MigrateSkipRowException('', FALSE);
   }
+  elseif ($data == 'skip_and_record_with_message') {
+    throw new MigrateSkipRowException('Intentionally skipped.', TRUE);
+  }
 }

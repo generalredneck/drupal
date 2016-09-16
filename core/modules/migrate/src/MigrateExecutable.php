@@ -230,6 +230,9 @@ class MigrateExecutable implements MigrateExecutableInterface {
       }
       catch (MigrateSkipRowException $e) {
         $id_map->saveIdMapping($row, array(), MigrateIdMapInterface::STATUS_IGNORED);
+        if ($e->getMessage()) {
+          $this->saveMessage($e->getMessage(), MigrateIdMapInterface::STATUS_IGNORED);
+        }
         $save = FALSE;
       }
 
