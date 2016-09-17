@@ -36,12 +36,21 @@ class MigrateSkipRowTest extends KernelTestBase {
           ['id' => '1', 'data' => 'skip_and_record'],
           ['id' => '2', 'data' => 'skip_and_dont_record'],
           ['id' => '3', 'data' => 'skip_and_record_with_message'],
+          ['id' => '4', 'data' => ''],
         ],
         'ids' => [
           'id' => ['type' => 'string'],
         ],
       ],
-      'process' => ['value' => 'data'],
+      'process' => [
+        'value' => [
+          [
+            'plugin' => 'skip_on_empty',
+            'method' => 'row',
+            'source' => 'data',
+          ]
+        ]
+      ],
       'destination' => [
         'plugin' => 'config',
         'config_name' => 'migrate_test.settings',
@@ -62,7 +71,15 @@ class MigrateSkipRowTest extends KernelTestBase {
     // The second row is not recorded in the map.
     $map_row = $id_map_plugin->getRowBySource(['id' => 2]);
     $this->assertFalse($map_row);
+    $messages = $id_map_plugin->getMessageIterator()->fetchAll();
+    $messages_array = [];
+    foreach($messages as $message) {
+      $messages_array[$message->source_ids_hash] = $message->message;
+    }
     $map_row = $id_map_plugin->getRowBySource(['id' => 3]);
+    $this->assertEqual($messages_array[$map_row['source_ids_hash']], "Intentionally skipped.");
+    $map_row = $id_map_plugin->getRowBySource(['id' => 4]);
+    $this->assertEqual($messages_array[$map_row['source_ids_hash']], "Row skipped because value was empty.");
   }
 
 }

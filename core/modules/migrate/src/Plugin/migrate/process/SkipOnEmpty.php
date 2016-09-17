@@ -24,7 +24,13 @@ class SkipOnEmpty extends ProcessPluginBase {
    */
   public function row($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
     if (!$value) {
-      throw new MigrateSkipRowException();
+      if (isset($this->configuration['quiet']) && $this->configuration['quiet']) {
+        $message = '';
+      }
+      else {
+        $message = 'Row skipped because ' . $destination_property . ' was empty.';
+      }
+      throw new MigrateSkipRowException($message);
     }
     return $value;
   }
